@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>5/23 雪だるま</title>
+    <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<script>
+    // ページの読み込みを待つ
+    window.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+        const width = 800
+        const height = 600;
+
+        var renderer = new THREE.WebGLRenderer();
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(width, height);
+        // 影を有効化
+        renderer.shadowMap.enabled = true;
+
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        camera.position.set(0, 2, 5);
+
+        const controls = new THREE.OrbitControls(camera, document.body);
+
+        // 光源
+        const light1 = new THREE.DirectionalLight(0xFFFFFF, 1);
+        light1.position.z = 1;
+        light1.position.x = 1;
+        light1.position.y = 1;
+        light1.castShadow = true;
+        scene.add(light1);
+        const light2 = new THREE.DirectionalLight(0xFFFFFF, 1);
+        light2.position.z = -1;
+        light2.position.x = -10;
+        light2.position.y = 1;
+        light2.castShadow = true;
+        scene.add(light2);
+
+        // ヘルパー
+        const axisHelper = new THREE.AxisHelper(2); //軸の長さ　X：赤、Y：緑、z：青
+        scene.add(axisHelper);
+
+        // 平面
+        var planeGeometry = new THREE.PlaneGeometry(10, 10);
+        var planeMaterial = new THREE.MeshStandardMaterial({color: 0x00ff00});
+        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.receiveShadow = true;
+        plane.rotation.set(-Math.PI / 2, 0, 0);
+        plane.position.set(0, -1.5, -2);
+        scene.add(plane);
+
+        // 図形作成
+        var under_sphere_m = new THREE.MeshStandardMaterial({color: 0xffffff});
+        var under_sphere_g = new THREE.SphereGeometry(0.7, 100, 100);
+        var under_sphere = new THREE.Mesh(under_sphere_g, under_sphere_m);
+        under_sphere.castShadow = true;
+
+        var top_sphere_m = new THREE.MeshStandardMaterial({color: 0xffffff});
+        var top_sphere_g = new THREE.SphereGeometry(0.5, 100, 100);
+        var top_sphere = new THREE.Mesh(top_sphere_g, top_sphere_m);
+        top_sphere.castShadow = true;
+        top_sphere.position.y = 1.1;
+
+        var beak_g = new THREE.ConeGeometry(0.1, 0.5, 32);
+        var material_beak = new THREE.MeshPhongMaterial({color: 0xea5506});
+        var beak = new THREE.Mesh(beak_g, material_beak);
+        beak.castShadow = true;
+        beak.rotation.x = 1.5;
+        beak.position.set(0, 1, 0.6);
+
+        var eye_g = new THREE.SphereGeometry(0.1, 32, 32);
+        var material_eye = new THREE.MeshPhongMaterial({color: 0x0});
+        var l_eye = new THREE.Mesh(eye_g, material_eye);
+        l_eye.castShadow = true;
+        l_eye.position.set(0.2, 1.3, 0.35);
+
+        var r_eye = new THREE.Mesh(eye_g, material_eye);
+        r_eye.castShadow = true;
+        r_eye.position.set(-0.2, 1.3, 0.35);
+
+        var arm_g = new THREE.CylinderGeometry(0.05, 0.05, 1, 100);
+        var arm_m = new THREE.MeshStandardMaterial({color: 0xdeb887});
+        var l_arm = new THREE.Mesh(arm_g, arm_m);
+        l_arm.castShadow = true;
+        l_arm.rotation.z = 1;
+        l_arm.position.x = -0.5;
+        l_arm.position.y = 0.5;
+
+        var r_arm = new THREE.Mesh(arm_g, arm_m);
+        r_arm.castShadow = true;
+        r_arm.rotation.z = -1;
+        r_arm.position.x = 0.5;
+        r_arm.position.y = 0.5;
+
+        // グループ化
+        const group = new THREE.Group();
+        group.add(under_sphere);
+        group.add(top_sphere);
+        group.add(beak);
+        group.add(l_eye);
+        group.add(r_eye);
+        group.add(l_arm);
+        group.add(r_arm);
+        group.position.set(0, 0, 0);//箱1～4のグループの原点の位置
+        scene.add(group);
+
+        const all = new THREE.Group();
+        all.add(plane);//平面を追加
+        all.add(group); // ペンギンを追加
+        all.position.set(0, 0, 0);//全体グループの原点の位置
+        scene.add(all);
+
+        update();
+
+        function update() {
+            renderer.render(scene, camera);
+            requestAnimationFrame(update);
+            group.rotation.y += 0.01;
+        }
+    }
+</script>
+</body>
+</html>
