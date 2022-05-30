@@ -35,11 +35,11 @@
         scene.add(axisHelper);
 
         var textureLoader = new THREE.TextureLoader();
-        var texture = textureLoader.load("/image/wall02.jpg");
+        var texture = textureLoader.load("./image/wall02.jpg");
         var mat = new THREE.MeshPhongMaterial();
         mat.map = texture;
 
-        var bump = textureLoader.load("/image/wall02.jpg");
+        var bump = textureLoader.load("./image/wall02.jpg");
         mat.bumpMap = bump;
         mat.bumpscale = 0.2;
 
