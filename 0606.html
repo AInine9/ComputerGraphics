@@ -1,0 +1,109 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<script>
+    // ページの読み込みを待つ
+    window.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+        // サイズを指定
+        const width = 800
+        const height = 600;
+
+        // レンダラーを作成
+        var renderer = new THREE.WebGLRenderer();
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(width, height);
+        // 背景の色を設定
+        renderer.setClearColor(0xffffdd);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        // カメラの初期座標を設定
+        camera.position.set(0, 0, 5);
+
+        // カメラコントローラーを作成
+        const controls = new THREE.OrbitControls(camera, document.body);
+
+        // 平行光源1
+        var directionalLight1 = new THREE.DirectionalLight(0xffffff);
+        directionalLight1.position.set(10, 10, 10);
+        // シーンに追加
+        scene.add(directionalLight1);
+        // 平行光源2
+        var directionalLight2 = new THREE.DirectionalLight(0x888888);
+        directionalLight2.position.set(-10, -10, 10);
+        // シーンに追加
+        scene.add(directionalLight2);
+
+        const textureLoader = new THREE.TextureLoader();
+
+        const geometry = new THREE.PlaneGeometry( 5, 20, 32 );
+        var texture = textureLoader.load("./image/car_road.png")
+        let material = new THREE.MeshBasicMaterial({side: THREE.DoubleSide, map: texture});
+        const plane = new THREE.Mesh( geometry, material );
+        plane.scale.set(0.3, 0.3, 0.3)
+        plane.rotation.set(Math.PI/2,0,0)
+        scene.add( plane );
+
+        // 木をスプライトで作成
+        texture = textureLoader.load("./image/car_red.png");
+        material = new THREE.SpriteMaterial({ map: texture,});
+
+        const car1 = new THREE.Sprite(material);
+        car1.position.y = 0.2;
+        car1.position.x = 0.4;
+        car1.position.z = (Math.random() * 3)
+        car1.scale.set(0.5, 0.5, 0.5);
+        scene.add(car1);
+
+        const car2 = new THREE.Sprite(material);
+        car2.position.y = 0.2;
+        car2.position.x = 0.4;
+        car2.position.z = (Math.random() * 3)
+        car2.scale.set(0.5, 0.5, 0.5);
+        scene.add(car2);
+
+        const car3 = new THREE.Sprite(material);
+        car3.position.y = 0.2;
+        car3.position.x = -0.4;
+        car3.position.z = (Math.random() * 3)
+        car3.scale.set(0.5, 0.5, 0.5);
+        scene.add(car3);
+
+        const car4 = new THREE.Sprite(material);
+        car4.position.y = 0.2;
+        car4.position.x = -0.4;
+        car4.position.z = (Math.random() * 3)
+        car4.scale.set(0.5, 0.5, 0.5);
+        scene.add(car4);
+
+        update();
+
+        // 毎フレーム時に実行されるループイベントです
+        function update() {
+            car1.position.z += 0.01;
+            if (car1.position.z >= 3) car1.position.z = -3;
+
+            car2.position.z += 0.01;
+            if (car2.position.z >= 3) car2.position.z = -3;
+
+            car3.position.z += 0.01;
+            if (car3.position.z >= 3) car3.position.z = -3;
+
+            car4.position.z += 0.01;
+            if (car4.position.z >= 3) car4.position.z = -3;
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(update);
+        }
+    }
+</script>
+</body>
