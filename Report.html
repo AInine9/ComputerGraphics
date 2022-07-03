@@ -1,0 +1,261 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/three@0.137.4/build/three.min.js"></script>
+    <script src="https://unpkg.com/three@0.137.4/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+<script>
+    // 2人の忍者が追いかけっこする。扉の開閉や太陽と月の浮き沈みがループするアニメーション作品
+
+    // ページの読み込みを待つ
+    window.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+        // サイズを指定
+        const width = 800
+        const height = 600;
+
+        // レンダラーを作成
+        var renderer = new THREE.WebGLRenderer();
+        document.body.appendChild(renderer.domElement);
+        renderer.setSize(width, height);
+        renderer.shadowMap.enabled = true;
+        renderer.setClearColor(0x87cefa);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        // カメラの初期座標を設定
+        camera.position.set(0, 100, 150);
+
+        // カメラコントローラーを作成
+        const controls = new THREE.OrbitControls(camera, document.body);
+
+        const light1 = new THREE.PointLight(0xffa500, 30, 50, 0.5);
+        light1.position.y = 1;
+        light1.position.z = -50;
+        light1.castShadow = true;
+        scene.add(light1);
+
+        const light2 = new THREE.PointLight(0xffa500, 30, 50, 0.5);
+        light2.position.y = 1;
+        light2.position.z = 50;
+        light2.castShadow = true;
+        scene.add(light2);
+
+        const light = new THREE.HemisphereLight(0x888888, 0x0000FF, 0.5);
+        scene.add(light);
+
+        const gridHelper = new THREE.GridHelper(100,1); // size, step
+        scene.add(gridHelper);
+        const axisHelper = new THREE.AxisHelper(100); //軸の長さ　X：赤、Y：緑、z：青
+        scene.add(axisHelper);
+
+        let geometry = new THREE.BoxGeometry(100, 1, 100);
+        let material = new THREE.MeshStandardMaterial();
+        let textureLoader = new THREE.TextureLoader();
+        let texture = textureLoader.load("./image/tatami.jpg");
+        material.map = texture;
+        const ground1 = new THREE.Mesh(geometry, material);
+        ground1.position.z = -50;
+        ground1.receiveShadow = true;
+        scene.add(ground1)
+
+        const ground2 = new THREE.Mesh(geometry, material);
+        ground2.position.z = 50;
+        ground2.receiveShadow = true;
+        scene.add(ground2);
+
+        geometry = new THREE.BoxGeometry(10, 1, 20);
+        material = new THREE.MeshStandardMaterial();
+        texture = textureLoader.load("./image/left.png");
+        material.map = texture;
+        const door_left1 = new THREE.Mesh(geometry, material);
+        door_left1.rotation.set(Math.PI/2,0,0);
+        door_left1.position.y = 10;
+        door_left1.position.x = -30;
+        door_left1.castShadow = true;
+        scene.add(door_left1);
+
+        const door_left2 = new THREE.Mesh(geometry, material);
+        door_left2.rotation.set(Math.PI/2,0,0);
+        door_left2.position.y = 10;
+        door_left2.position.x = 20;
+        door_left2.castShadow = true;
+        scene.add(door_left2);
+
+        geometry = new THREE.BoxGeometry(10, 1, 20);
+        material = new THREE.MeshStandardMaterial();
+        texture = textureLoader.load("./image/right.png");
+        material.map = texture;
+        const door_right1 = new THREE.Mesh(geometry, material);
+        door_right1.rotation.set(Math.PI/2,0,0);
+        door_right1.position.y = 10;
+        door_right1.position.x = -20;
+        door_right1.castShadow = true;
+        scene.add(door_right1);
+
+        texture = textureLoader.load("./image/right.png");
+        material.map = texture;
+        const door_right2 = new THREE.Mesh(geometry, material);
+        door_right2.rotation.set(Math.PI/2,0,0);
+        door_right2.position.y = 10;
+        door_right2.position.x = 30;
+        door_right2.castShadow = true;
+        scene.add(door_right2);
+
+        geometry = new THREE.BoxGeometry(30, 1, 21);
+        material = new THREE.MeshStandardMaterial();
+        texture = textureLoader.load("./image/wall.jpg");
+        material.map = texture;
+        const wall_center = new THREE.Mesh(geometry, material);
+        wall_center.rotation.set(Math.PI/2,0,0);
+        wall_center.position.y = 10;
+        wall_center.position.z = -1;
+        wall_center.castShadow = true;
+        scene.add(wall_center);
+
+        geometry = new THREE.BoxGeometry(15, 1, 21);
+        material = new THREE.MeshStandardMaterial();
+        texture = textureLoader.load("./image/wall.jpg");
+        material.map = texture;
+        const wall_left = new THREE.Mesh(geometry, material);
+        wall_left.rotation.set(Math.PI/2,0,0);
+        wall_left.position.y = 10;
+        wall_left.position.x = -42;
+        wall_left.position.z = -1;
+        wall_left.castShadow = true;
+        scene.add(wall_left);
+
+        const wall_right = new THREE.Mesh(geometry, material);
+        wall_right.rotation.set(Math.PI/2,0,0);
+        wall_right.position.y = 10;
+        wall_right.position.x = 42;
+        wall_right.position.z = -1;
+        wall_right.castShadow = true;
+        scene.add(wall_right);
+
+        geometry = new THREE.BoxGeometry(100, 1, 8);
+        material = new THREE.MeshStandardMaterial();
+        texture = textureLoader.load("./image/ranma.jpg", function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.offset.set(0, 0);
+            texture.repeat.set(4, 1);
+        });
+        material.map = texture;
+        const ranma = new THREE.Mesh(geometry, material);
+        ranma.rotation.set(Math.PI/2,0,0);
+        ranma.position.y = 24;
+        ranma.position.z = -1;
+        ranma.castShadow = true;
+        scene.add(ranma);
+
+        texture = textureLoader.load("./image/ninja1_blue.png");
+        material = new THREE.SpriteMaterial({ map: texture,});
+        const ninja1 = new THREE.Sprite(material);
+        ninja1.position.y = 5;
+        ninja1.position.x = 25;
+        ninja1.position.z = -49;
+        ninja1.scale.set(10, 10, 10);
+        ninja1.castShadow = true;
+        scene.add(ninja1);
+
+        texture = textureLoader.load("./image/ninja2_red.png");
+        material = new THREE.SpriteMaterial({ map: texture,});
+        const ninja2 = new THREE.Sprite(material);
+        ninja2.position.y = 5;
+        ninja2.position.x = 25;
+        ninja2.position.z = -24;
+        ninja2.scale.set(10, 10, 10);
+        ninja2.castShadow = true;
+        scene.add(ninja2);
+
+        let door_right1_flag = 0;
+        let door_right2_flag = 0;
+        let door_left1_flag = 0;
+        let door_left2_flag = 0;
+        let ninja1_x_flag = 0;
+        let ninja1_z_flag = 0;
+        let ninja2_x_flag = 0;
+        let ninja2_z_flag = 0;
+
+        update();
+
+        // 毎フレーム時に実行されるループイベントです
+        function update() {
+            renderer.render(scene, camera);
+            requestAnimationFrame(update);
+
+            if (ninja1_x_flag === 1 && ninja2_z_flag === 1) {
+                door_right1.position.x += 0.1;
+                if (door_right1.position.x >= -10) door_right1_flag = 1;
+            } else if (door_right1_flag === 1) {
+                door_right1.position.x -= 0.1;
+                if (door_right1.position.x === -20) door_right1_flag = 0;
+            }
+
+            if (ninja1_x_flag === 0 && ninja2_z_flag === 0) {
+                door_right2.position.x += 0.1;
+                if (door_right2.position.x >= 40) door_right2_flag = 1;
+            } else if (door_right2_flag === 1) {
+                door_right2.position.x -= 0.1;
+                if (door_right2.position.x === 30) door_right2_flag = 0;
+            }
+
+            if (ninja1_x_flag === 1 && ninja2_z_flag === 1) {
+                door_left1.position.x -= 0.1;
+                if (door_left1.position.x <= -40) door_left1_flag = 1;
+            } else if (door_left1_flag === 1) {
+                door_left1.position.x += 0.1;
+                if (door_left1.position.x === -30) door_left1_flag = 0;
+            }
+
+            if (ninja1_x_flag === 0 && ninja2_z_flag === 0) {
+                door_left2.position.x -= 0.1;
+                if (door_left2.position.x <= 10) door_left2_flag = 1;
+            } else if (door_left2_flag === 1) {
+                door_left2.position.x += 0.1;
+                if (door_left2.position.x === 20) door_left2_flag = 0;
+            }
+
+            if (ninja1_z_flag === 0 && ninja1_x_flag === 0) {
+                ninja1.position.z += 0.5;
+                if (ninja1.position.z === 50) ninja1_z_flag = 1;
+            }
+            if (ninja1_z_flag === 1 && ninja1_x_flag === 0) {
+                ninja1.position.x -= 0.5;
+                if (ninja1.position.x === -25) ninja1_x_flag = 1;
+            }
+            if (ninja1_z_flag === 1 && ninja1_x_flag === 1) {
+                ninja1.position.z -= 0.5;
+                if (ninja1.position.z === -50) ninja1_z_flag = 0;
+            }
+            if (ninja1_z_flag === 0 && ninja1_x_flag === 1) {
+                ninja1.position.x += 0.5;
+                if (ninja1.position.x === 25) ninja1_x_flag = 0;
+            }
+
+            if (ninja2_z_flag === 0 && ninja2_x_flag === 0) {
+                ninja2.position.z += 0.5;
+                if (ninja2.position.z === 50) ninja2_z_flag = 1;
+            }
+            if (ninja2_z_flag === 1 && ninja2_x_flag === 0) {
+                ninja2.position.x -= 0.5;
+                if (ninja2.position.x === -25) ninja2_x_flag = 1;
+            }
+            if (ninja2_z_flag === 1 && ninja2_x_flag === 1) {
+                ninja2.position.z -= 0.5;
+                if (ninja2.position.z === -50) ninja2_z_flag = 0;
+            }
+            if (ninja2_z_flag === 0 && ninja2_x_flag === 1) {
+                ninja2.position.x += 0.5;
+                if (ninja2.position.x === 25) ninja2_x_flag = 0;
+            }
+
+        }
+    }
+</script>
+</body>
