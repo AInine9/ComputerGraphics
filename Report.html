@@ -163,6 +163,25 @@
         const sun = new THREE.Mesh(geometry, material);
         sun.position.y = 100;
 
+        geometry = new THREE.BoxGeometry(10, 0.1, 10);
+        material = new THREE.MeshStandardMaterial({roughness:0.5});
+        texture = textureLoader.load("./image/syuriken.png", function (texture) {
+            texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+            texture.offset.set(0, 0);
+            texture.repeat.set(1, 1);
+        });
+        material.map = texture;
+        material.alpha = true;
+        material.transparent = true;
+        const syuriken = new THREE.Mesh(geometry, material);
+        syuriken.rotation.set(0,Math.PI/2,0);
+        syuriken.position.y = 10;
+        syuriken.position.x = 20;
+        syuriken.position.z= 50;
+        syuriken.castShadow = true;
+        syuriken.visible = false;
+        scene.add(syuriken);
+
         let door_right1_flag = 0;
         let door_right2_flag = 0;
         let door_left1_flag = 0;
@@ -171,6 +190,7 @@
         let ninja1_z_flag = 0;
         let ninja2_x_flag = 0;
         let ninja2_z_flag = 0;
+        let syuriken_flag = 0;
 
         update();
 
@@ -245,7 +265,27 @@
                 if (ninja2.position.x === 25) ninja2_x_flag = 0;
             }
 
+            if (ninja1.position.x === 25 && ninja1.position.z === 49) {
+                syuriken.visible = true;
+                syuriken_flag = 1;
+            } else if (ninja1.position.x === -25 && ninja1.position.z === 49) {
+                syuriken.visible = false;
+                syuriken_flag = 0;
+            }
+
+            if (syuriken_flag === 1) {
+                syuriken.position.x -= 0.6;
+                syuriken.rotation.y += 0.2;
+            } else {
+                syuriken.position.x = 20;
+            }
         }
     }
 </script>
+<p>
+    2人の忍者が追いかけあうCGアニメーション。
+</p>
+<p>
+    2人の位置に合わせて扉を開閉させたり、手裏剣を回転させたりさせています。
+</p>
 </body>
