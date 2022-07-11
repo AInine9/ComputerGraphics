@@ -154,9 +154,22 @@
         scene.add(ninja2);
 
         // 平行光源
-        const directionalLight = new THREE.DirectionalLight(0xffa500, 1);
+        const directionalLight = new THREE.DirectionalLight(0xffa500, 0.5);
         directionalLight.position.set(1, 1, 1);
+        directionalLight.castShadow = true;
         scene.add(directionalLight);
+
+        const light = new THREE.PointLight(0xffa500, 2, 50, 1.0);
+        light.position.y = 30
+        light.position.z = -50
+        light.castShadow = true;
+        scene.add(light);
+
+        const light2 = new THREE.PointLight(0xffa500, 2, 50, 1.0);
+        light2.position.y = 30
+        light2.position.z = 50
+        light.castShadow = true;
+        scene.add(light2);
 
         geometry = new THREE.SphereGeometry(5, 64, 64);
         material = new THREE.MeshBasicMaterial({color: 0xffa500, roughness:0.5});
